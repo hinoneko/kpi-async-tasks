@@ -1,18 +1,22 @@
 import asyncio
+from random import random
 
 
-class AsyncNumberGenerator:
-    def __init__(self, limit):
-        self.limit = limit
+class AsyncRange:
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
 
     async def __aiter__(self):
-        for i in range(self.limit):
-            await asyncio.sleep(0.1)
+        for i in range(self.start, self.end):
+            delay = random()
+            await asyncio.sleep(delay)
             yield i
+
 
 def async_iterator_demo():
     async def consume_generator():
-        async for number in AsyncNumberGenerator(5):
+        async for number in AsyncRange(5):
             print(f"Generated number: {number}")
 
     return consume_generator
