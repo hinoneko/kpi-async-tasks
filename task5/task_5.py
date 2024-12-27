@@ -12,15 +12,14 @@ class EventEmitter:
             for listener in self.listeners[event]:
                 listener(*args)
 
-def event_emitter_demo():
-    def on_data_received(data):
-        print(f"Data received: {data}")
 
+def on_data_received(data):
+    print(f"Data received: {data}")
+
+
+def main():
     emitter = EventEmitter()
     emitter.on("data", on_data_received)
     emitter.emit("data", "Hello, EventEmitter!")
-
-def main():
-    event_emitter_demo()
 
 main()
