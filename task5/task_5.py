@@ -1,0 +1,26 @@
+class EventEmitter:
+    def __init__(self):
+        self.listeners = {}
+
+    def on(self, event, listener):
+        if event not in self.listeners:
+            self.listeners[event] = []
+        self.listeners[event].append(listener)
+
+    def emit(self, event, *args):
+        if event in self.listeners:
+            for listener in self.listeners[event]:
+                listener(*args)
+
+def event_emitter_demo():
+    def on_data_received(data):
+        print(f"Data received: {data}")
+
+    emitter = EventEmitter()
+    emitter.on("data", on_data_received)
+    emitter.emit("data", "Hello, EventEmitter!")
+
+def main():
+    event_emitter_demo()
+
+main()
