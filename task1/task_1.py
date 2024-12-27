@@ -1,25 +1,36 @@
 import asyncio
+from random import random
 
-def async_map(lst, func, callback):
-    async def apply_map():
-        tasks = [asyncio.create_task(func(item)) for item in lst]
-        results = await asyncio.gather(*tasks)
-        callback(results)
 
-    return apply_map()
+async def async_map(lst, func, callback):
+    tasks = [asyncio.create_task(func(item)) for item in lst]
+    results = await asyncio.gather(*tasks)
 
-def demo_async_map():
-    async def multiply_by_two(x):
-        await asyncio.sleep(0.1)
-        return x * 2
+    return callback(results)
 
-    def print_results(results):
-        print("Task 1 Results:", results)
 
-    numbers = [1, 2, 3, 4]
-    await async_map(numbers, multiply_by_two, print_results)
+async def multiply_by_two(x):
+    delay = random()
+    await asyncio.sleep(delay)
+
+    return x * 2
+
+
+def print_results(results):
+    print("Results:", results)
+
+    return results
+
 
 async def main():
-    await demo_async_map()
+    nums_lst = [
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9],
+    ]
+
+    cors = [async_map(nums, multiply_by_two, print_results) for nums in nums_lst]
+    tasks = asyncio.gather(*cors)
+    await tasks
 
 asyncio.run(main())
