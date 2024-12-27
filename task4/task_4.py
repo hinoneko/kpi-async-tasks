@@ -14,14 +14,17 @@ class AsyncRange:
             yield i
 
 
-def async_iterator_demo():
-    async def consume_generator():
-        async for number in AsyncRange(5):
-            print(f"Generated number: {number}")
+async def async_print_range(start, end, string):
+    async for number in AsyncRange(start, end):
+        print(f"{string}: {number}")
 
-    return consume_generator
 
 async def main():
-    await asyncio.create_task(async_iterator_demo()())
+    cors = [
+        async_print_range(0, 3, "Range 1"),
+        async_print_range(3, 6, "Range 2"),
+        async_print_range(6, 9, "Range 3"),
+    ]
+    await asyncio.gather(*cors)
 
 asyncio.run(main())
