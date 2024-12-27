@@ -17,7 +17,7 @@ async def multiply_by_two(x):
 
 
 def print_results(results):
-    print("Results:", results)
+    print(f"Results: {results}")
 
     return results
 
