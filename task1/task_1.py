@@ -3,21 +3,35 @@ from random import random
 
 
 async def async_map(lst, func, callback):
-    tasks = [asyncio.create_task(func(item)) for item in lst]
-    results = await asyncio.gather(*tasks)
+    error = None
+    results = None
+    try:
+        tasks = [asyncio.create_task(func(x)) for x in lst]
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+    except Exception as e:
+        error = str(e)
 
-    return callback(results)
+    return callback(results, error)
 
 
 async def multiply_by_two(x):
-    delay = random()
-    await asyncio.sleep(delay)
+    try:
+        delay = random()
+        await asyncio.sleep(delay)
+        return x * 2
+    except Exception as e:
+        raise RuntimeError(f"Error in multiply_by_two({x}): {e}")
 
-    return x * 2
 
-
-def print_results(results):
-    print(f"Results: {results}")
+def print_results(results, error):
+    if error is not None:
+        print(f"Callback received an error: {error}")
+    else:
+        for res in results:
+            if isinstance(res, Exception):
+                print(f"Error in task: {res}")
+            else:
+                print(f"Result: {res}")
 
     return results
 
@@ -29,8 +43,9 @@ async def main():
         [7, 8, 9],
     ]
 
-    cors = [async_map(nums, multiply_by_two, print_results) for nums in nums_lst]
-    tasks = asyncio.gather(*cors)
-    await tasks
+    for sublist in nums_lst:
+        print(f"Processing sublist: {sublist}")
+        results = await async_map(sublist, multiply_by_two, print_results)
+        print("---")
 
 asyncio.run(main())
